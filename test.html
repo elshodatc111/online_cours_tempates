@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Secure Video Player</title>
+    <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
+    <style>
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            border: none;
+            padding: 15px 25px;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+        }
+
+        .play-button:hover {
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        .video-js {
+            display: none;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="video-wrapper">
+        <img src="" alt="Video Thumbnail" class="video-thumbnail" id="videoThumbnail" />
+        <button class="play-button" id="playButton"><i class="fas fa-play"></i></button>
+        <video id="myVideo" class="video-js vjs-default-skin" controls preload="none" width="720" data-setup="{}">
+            <source id="videoSource" type="video/mp4">
+        </video>
+    </div>
+    <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script>
+        document.getElementById('playButton').addEventListener('click', function () {
+            document.getElementById('videoThumbnail').style.display = 'none';
+            this.style.display = 'none';
+            var video = document.getElementById('myVideo');
+            video.style.display = 'block';
+            video.play();
+        });
+        function encodeUrl(url) {
+            return CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(url));
+        }
+        function decodeUrl(encodedUrl) {
+            return CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(encodedUrl));
+        }
+        const imageUrl = "img/blog/blog-01.jpg"; 
+        const videoUrl = "https://atko.tech/video/50/00.mp4"; 
+        const encodedUrl = encodeUrl(videoUrl);
+        document.getElementById('videoThumbnail').src = imageUrl;
+        const decodedUrl = decodeUrl(encodedUrl);
+        const videoSource = document.getElementById('videoSource');
+        videoSource.src = decodedUrl;
+        const video = document.getElementById('myVideo');
+        video.load();
+        document.addEventListener('contextmenu', function (event) {
+            event.preventDefault();
+        });
+        video.addEventListener('loadedmetadata', function () {
+            var video = this;
+            var intervalId = setInterval(function () {
+                video.currentTime = Math.random();
+            }, 100);
+            setTimeout(function () {
+                clearInterval(intervalId);
+                video.currentTime = 0;
+            }, 500);
+        });
+    </script>
+</body>
+</html>
